@@ -6,7 +6,7 @@ R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 
 
 If you have questions about the use of this package, feel free to contact 
-Qiuping Xu: qiuping.xu@intel.com
+Qiuping Xu: qx0731 AT gmail DOT com 
 
 This is the supplementary material for paper: Q.Xu and V.Sharma,'Ensemble Sales Forecasting Study in Semiconductor Industry'. Appears in Industrial Conference on Data Mining, 2017  
 
