@@ -1,8 +1,10 @@
 decorrelate = function(data, k1, k2)
-  # input: data frame 
+# input: 
+  # data: data frame with the first column as the response and the rest are the features 
   # k1 the dimension for MDS
   # k2 the dimension for Kmean
-  # output: data frame + mds fit + kmean fit
+# output: 
+  # list of 3: data frame, mds fit,  kmean fit
 {
   df = cor(data[ ,sapply(data, is.numeric)], use = "complete")
   dd = df[rowSums(is.na(df)) != ncol(df)-1, colSums(is.na(df)) != nrow(df)-1]

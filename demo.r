@@ -5,7 +5,7 @@ library(DAAG)
 library(pracma)
 library(pls)
 library(vars)
-library(plyr)
+library(dplyr)
 library(xlsx)
 library(doParallel)
 library(glmnet)
@@ -51,18 +51,20 @@ decor_result[[3]] # call this to see whether 'f_r1' and 'f_r1_similar' are in th
 KK = nrow(target_all1)
 target = target_all1[1:(KK - 1),, drop= FALSE]
 target_test = target_all1[KK,, drop = FALSE]
-test_number = 4
-Kmax = 5
+test_number = 40
+Kmax = 3
 nmodel = 20
+sample_time = TRUE
 rank1 = TRUE
 
-lm_output = LM_ensemble_ts_para(target, target_test, nmodel, Kmax, test_number, rank1)
-rf_output = RF_ensemble_ts_para(target, target_test, nmodel, Kmax, test_number, rank1)
-boost_output = XGBoost_ensemble_ts_para(target, target_test, nmodel, Kmax, test_number, rank1)
+lm_output = LM_ensemble_ts_para(target, target_test, nmodel, Kmax, test_number,sample_time, rank1)
+rf_output = RF_ensemble_ts_para(target, target_test, nmodel, Kmax, test_number, sample_time, rank1)
+boost_output = XGBoost_ensemble_ts_para(target, target_test, nmodel, Kmax, test_number, sample_time, rank1)
 
 paste('linear model frct', lm_output[[1]])
 paste('random forest model frct', rf_output[[1]])
 paste('Boosting tress model frct', boost_output[[1]])
+paste('average model frct', (lm_output[[1]] + rf_output[[1]] + boost_output[[1]])/3)
 paste('acutual value is', target_test[1, 1])
 
 paste('linear model top variables', lm_output[[3]][1,1], 'and', lm_output[[3]][1,2])

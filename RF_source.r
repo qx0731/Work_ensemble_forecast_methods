@@ -1,4 +1,18 @@
-RF_ensemble_ts_para = function(target, target_test, nmodel, Kmax, test_number, rank){
+RF_ensemble_ts_para = function(target, target_test, nmodel, Kmax, test_number,time_sample, rank)
+  # input: 
+  # target: traning data
+  # target_test: test data set
+  # nmodel: number of models to save for changepoint detection 
+  # Kmax: max number of features for model building 
+  # test_number: number of sample in validation set
+  # time_sample: Boolean whether the data is a time series data
+  # rank: Boolean for variable importance rank. Mute for iid data ( time_sample is FALSE)
+  # output: 
+  # list of 3 
+  # item 1: frct value
+# item 2: frct [low, mean, high] for each model in the ensemble 
+# item 3: variable rank
+{
   error = ones(nmodel, 1) * Inf
   variable_number = ncol(target_all1) -1
   error = ones(nmodel, 1) * Inf
@@ -24,11 +38,21 @@ RF_ensemble_ts_para = function(target, target_test, nmodel, Kmax, test_number, r
       K_results <- foreach (i = 1:ncol(test), .combine = cbind)  %dopar%
       {
         index_predictor = c(1,test[, i])
+        if (time_sample){
         modelData = target[1:(nrow(target)-test_number), index_predictor, drop = FALSE]
         fit_std =randomForest(y=modelData$response, x = modelData[,-1],ntree = 50, mtry = 3, keep.forest = TRUE, type="regression", nodesize = 30)
         newdata =data.frame(target[nrow(target):(nrow(target)-test_number + 1), test[, i], drop = FALSE])
         pred_sale = predict(fit_std, newdata)
         temp[, i]= (pred_sale/ target[nrow(target):(nrow(target)-test_number + 1), 1]-1) * 100
+        }else{
+          index_test = sample.int(nrow(target), test_number, replace = FALSE)
+          index_train = setdiff(1:nrow(target),index_test)
+          modelData = target[index_train, index_predictor, drop = FALSE]
+          newdata =data.frame(target[index_test, test[, i], drop = FALSE])
+          fit_std =randomForest(y=modelData$response, x = modelData[,-1],ntree = 50, mtry = 3, keep.forest = TRUE, type="regression", nodesize = 30)
+          pred_sale = predict(fit_std, newdata)
+          temp[, i]= (pred_sale[,1]/ target[index_test, 1]-1) * 100 
+        }
         sale[,i] = pred_sale
         
         list(i, sum(as.matrix( b * abs(temp[1:test_number, i]))) , temp[, i], sale[, i],  K)
@@ -71,7 +95,7 @@ RF_ensemble_ts_para = function(target, target_test, nmodel, Kmax, test_number, r
   
   
   ##########################
-  if (rank){
+  if (rank && time_sample){
     rep = 20
     error_permuate = array(data=NA, dim=c(model_max,rep, ncol(target) -1))
     for (ii in 1:(ncol(target)-1))
