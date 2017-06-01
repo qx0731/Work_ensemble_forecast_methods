@@ -80,3 +80,5 @@ Key outputs:
 •	Line 64 to 67 in 'demo.r': see whether the ensemble process gave a reasonable frct number. 
 
 •	Line 70 to 73 in 'demo.r': see whether the variable ranking correctly identified f1 and f_other1 as the most importance variables. These should be also available in the graphical outputs. 
+
+Enjoy ~ 
